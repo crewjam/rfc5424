@@ -5,7 +5,7 @@ import "time"
 // Message represents a log message as defined by RFC-5424
 // (https://tools.ietf.org/html/rfc5424)
 type Message struct {
-	Priority       int
+	Priority       Priority
 	Timestamp      time.Time
 	Hostname       string
 	AppName        string
