@@ -27,11 +27,6 @@ type StructuredData struct {
 	Parameters []SDParam
 }
 
-// AddParam adds the given name and value to this structured data's parameters
-func (sd *StructuredData) AddParam(name, value string) {
-	sd.Parameters = append(sd.Parameters, SDParam{Name: name, Value: value})
-}
-
 // AddDatum adds structured data to a log message
 func (m *Message) AddDatum(ID string, Name string, Value string) {
 	if m.StructuredData == nil {
