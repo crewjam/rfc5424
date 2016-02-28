@@ -11,19 +11,21 @@ import (
 // of 32-characters. (When true, this violates RFC-5424).
 const allowLongSdNames = true
 
-type errorInvalidValue struct {
+// ErrInvalidValue is returned when a log message cannot be emitted because one
+// of the values is invalid.
+type ErrInvalidValue struct {
 	Property string
 	Value    interface{}
 }
 
-func (e errorInvalidValue) Error() string {
+func (e ErrInvalidValue) Error() string {
 	return fmt.Sprintf("Message cannot be serialized because %s is invalid: %v",
 		e.Property, e.Value)
 }
 
-// InvalidValue returns an invalid value error with the given property
-func InvalidValue(property string, value interface{}) error {
-	return errorInvalidValue{Property: property, Value: value}
+// invalidValue returns an invalid value error with the given property
+func invalidValue(property string, value interface{}) error {
+	return ErrInvalidValue{Property: property, Value: value}
 }
 
 func nilify(x string) string {
@@ -89,46 +91,46 @@ func (m Message) assertValid() error {
 
 	// HOSTNAME        = NILVALUE / 1*255PRINTUSASCII
 	if !isPrintableUsASCII(m.Hostname) {
-		return InvalidValue("Hostname", m.Hostname)
+		return invalidValue("Hostname", m.Hostname)
 	}
 	if len(m.Hostname) > 255 {
-		return InvalidValue("Hostname", m.Hostname)
+		return invalidValue("Hostname", m.Hostname)
 	}
 
 	// APP-NAME        = NILVALUE / 1*48PRINTUSASCII
 	if !isPrintableUsASCII(m.AppName) {
-		return InvalidValue("AppName", m.AppName)
+		return invalidValue("AppName", m.AppName)
 	}
 	if len(m.AppName) > 48 {
-		return InvalidValue("AppName", m.AppName)
+		return invalidValue("AppName", m.AppName)
 	}
 
 	// PROCID          = NILVALUE / 1*128PRINTUSASCII
 	if !isPrintableUsASCII(m.ProcessID) {
-		return InvalidValue("ProcessID", m.ProcessID)
+		return invalidValue("ProcessID", m.ProcessID)
 	}
 	if len(m.ProcessID) > 128 {
-		return InvalidValue("ProcessID", m.ProcessID)
+		return invalidValue("ProcessID", m.ProcessID)
 	}
 
 	// MSGID           = NILVALUE / 1*32PRINTUSASCII
 	if !isPrintableUsASCII(m.MessageID) {
-		return InvalidValue("MessageID", m.MessageID)
+		return invalidValue("MessageID", m.MessageID)
 	}
 	if len(m.MessageID) > 32 {
-		return InvalidValue("MessageID", m.MessageID)
+		return invalidValue("MessageID", m.MessageID)
 	}
 
 	for _, sdElement := range m.StructuredData {
 		if !isValidSdName(sdElement.ID) {
-			return InvalidValue("StructuredData/ID", sdElement.ID)
+			return invalidValue("StructuredData/ID", sdElement.ID)
 		}
 		for _, sdParam := range sdElement.Parameters {
 			if !isValidSdName(sdParam.Name) {
-				return InvalidValue("StructuredData/Name", sdParam.Name)
+				return invalidValue("StructuredData/Name", sdParam.Name)
 			}
 			if !utf8.ValidString(sdParam.Value) {
-				return InvalidValue("StructuredData/Value", sdParam.Value)
+				return invalidValue("StructuredData/Value", sdParam.Value)
 			}
 		}
 	}

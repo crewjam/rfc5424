@@ -313,7 +313,7 @@ func (s *MarshalTest) TestCannotMarshalInvalidMessages(c *C) {
 	}
 }
 
-func (s *MarshalTest) TestLogAttributes(c *C) {
+func (s *MarshalTest) TestLongAttributes(c *C) {
 
 	m := Message{
 		StructuredData: []StructuredData{

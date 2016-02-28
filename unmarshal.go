@@ -9,18 +9,19 @@ import (
 	"unicode"
 )
 
-type errorBadFormat struct {
+// ErrBadFormat is the error that is returned when a log message cannot be parsed
+type ErrBadFormat struct {
 	Property string
 }
 
-func (e errorBadFormat) Error() string {
+func (e ErrBadFormat) Error() string {
 	return fmt.Sprintf("Message cannot be unmarshaled because it is not well formed (%s)",
 		e.Property)
 }
 
-// BadFormat returns a bad format error with the given property
-func BadFormat(property string) error {
-	return errorBadFormat{Property: property}
+// badFormat returns a bad format error with the given property
+func badFormat(property string) error {
+	return ErrBadFormat{Property: property}
 }
 
 // UnmarshalBinary unmarshals a byte slice into a message
@@ -45,7 +46,7 @@ func (m *Message) UnmarshalBinary(inputBuffer []byte) error {
 	if err == io.EOF {
 		return nil
 	} else if ch != ' ' {
-		return BadFormat("MSG") // unreachable
+		return badFormat("MSG") // unreachable
 	}
 
 	// TODO(ross): detect and handle UTF-8 BOM (\xef\xbb\xbf)
@@ -135,7 +136,7 @@ func (m *Message) readPriority(r io.RuneScanner) error {
 		return err
 	}
 	if ch != '<' {
-		return BadFormat("Priority")
+		return badFormat("Priority")
 	}
 
 	rv := &bytes.Buffer{}
@@ -149,17 +150,16 @@ func (m *Message) readPriority(r io.RuneScanner) error {
 			continue
 		}
 		if ch != '>' {
-			return BadFormat("Priority")
+			return badFormat("Priority")
 		}
 
 		// We have a complete integer expression
 		priority, err := strconv.ParseInt(string(rv.Bytes()), 10, 32)
 		if err != nil {
-			return BadFormat("Priority")
+			return badFormat("Priority")
 		}
 		m.Priority = Priority(priority)
 		return nil
-
 	}
 }
 
@@ -170,7 +170,7 @@ func (m *Message) readVersion(r io.RuneScanner) error {
 		return err
 	}
 	if ch != '1' {
-		return BadFormat("Version")
+		return badFormat("Version")
 	}
 	return nil
 }
@@ -264,7 +264,7 @@ func (m *Message) readStructuredData(r io.RuneScanner) (err error) {
 			}
 			m.StructuredData = append(m.StructuredData, sde)
 		} else {
-			return BadFormat("StructuredData")
+			return badFormat("StructuredData")
 		}
 	}
 }
@@ -283,7 +283,7 @@ func readSDElement(r io.RuneScanner) (element StructuredData, err error) {
 		return element, err // hard to reach without underlying IO error
 	}
 	if ch != '[' {
-		return element, BadFormat("StructuredData[]") // unreachable
+		return element, badFormat("StructuredData[]") // unreachable
 	}
 	element.ID, err = readSdID(r)
 	if err != nil {
@@ -302,7 +302,7 @@ func readSDElement(r io.RuneScanner) (element StructuredData, err error) {
 			}
 			element.Parameters = append(element.Parameters, *param)
 		} else {
-			return element, BadFormat("StructuredData[]")
+			return element, badFormat("StructuredData[]")
 		}
 	}
 }
@@ -342,7 +342,7 @@ func readSdParam(r io.RuneScanner) (sdp *SDParam, err error) {
 		return nil, err // hard to reach
 	}
 	if ch != '=' {
-		return nil, BadFormat("StructuredData[].Parameters") // not reachable
+		return nil, badFormat("StructuredData[].Parameters") // not reachable
 	}
 
 	sdp.Value, err = readSdParamValue(r)
@@ -380,7 +380,7 @@ func readSdParamValue(r io.RuneScanner) (string, error) {
 		return "", err
 	}
 	if ch != '"' {
-		return "", BadFormat("StructuredData[].Parameters[]") // hard to reach
+		return "", badFormat("StructuredData[].Parameters[]") // hard to reach
 	}
 
 	rv := &bytes.Buffer{}
@@ -411,7 +411,7 @@ func readSpace(r io.RuneScanner) error {
 		return err
 	}
 	if ch != ' ' {
-		return BadFormat("expected space")
+		return badFormat("expected space")
 	}
 	return nil
 }
