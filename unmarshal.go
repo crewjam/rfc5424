@@ -55,7 +55,9 @@ func (m *Message) UnmarshalBinary(inputBuffer []byte) error {
 	// MSG-ANY         = *OCTET ; not starting with BOM
 	// MSG-UTF8        = BOM UTF-8-STRING
 	// BOM             = %xEF.BB.BF
-	m.Message = r.Bytes()
+
+	// To be on the safe side, remaining stuff is copied over
+	m.Message = copyFrom(r.Bytes())
 	return nil
 }
 
@@ -434,4 +436,10 @@ func readWord(r io.RuneScanner) (string, error) {
 			return rvString, nil
 		}
 	}
+}
+
+func copyFrom(in []byte ) []byte {
+	out := make([]byte,len(in))
+	copy(out, in)
+	return out
 }
