@@ -139,11 +139,18 @@ func (m Message) assertValid() error {
 
 // MarshalBinary marshals the message to a byte slice, or returns an error
 func (m Message) MarshalBinary() ([]byte, error) {
-	if err := m.assertValid(); err != nil {
+	b := bytes.NewBuffer(nil)
+	if err := m.Marshal(b); err != nil {
 		return nil, err
 	}
+	return b.Bytes(), nil
+}
 
-	b := bytes.NewBuffer(nil)
+// Marshal marshals the message into the given buffer, or returns an error
+func (m Message) Marshal(b *bytes.Buffer) error {
+	if err := m.assertValid(); err != nil {
+		return err
+	}
 	fmt.Fprintf(b, "<%d>1 %s %s %s %s %s ",
 		m.Priority,
 		m.Timestamp.Format(time.RFC3339Nano),
@@ -168,5 +175,5 @@ func (m Message) MarshalBinary() ([]byte, error) {
 		fmt.Fprint(b, " ")
 		b.Write(m.Message)
 	}
-	return b.Bytes(), nil
+	return nil
 }
