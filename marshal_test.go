@@ -13,7 +13,7 @@ type MarshalTest struct {
 }
 
 func T(s string) time.Time {
-	rv, err := time.Parse(time.RFC3339Nano, s)
+	rv, err := time.Parse(rfc3339Micro, s)
 	if err != nil {
 		panic(err)
 	}
