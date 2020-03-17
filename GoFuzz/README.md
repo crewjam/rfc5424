@@ -7,7 +7,7 @@ go-fuzz-build -func=FuzzReadFrom
 go-fuzz -bin=GoFuzz-fuzz.zip -workdir=workdir -procs=1
 ```
 
-(2) Build and Fuzz ReadFrom method
+(2) Build and Fuzz UnmarshalBinary method
 
 ```
 go-fuzz-build -func=FuzzUnmarshalBinary
