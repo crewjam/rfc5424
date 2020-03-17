@@ -1,0 +1,4 @@
+github.com/crewjam/rfc5424 v0.0.0-20180723152949-c25bdd3a0ba2 h1:ikTypaS8gho3dBf1gySXxxv+NkB8vyYgqMPYv51LD4U=
+github.com/crewjam/rfc5424 v0.0.0-20180723152949-c25bdd3a0ba2/go.mod h1:+E6hJ4dnJi+OtRGvE3sIOIwMivXJTbRqZfQkWeANo6I=
+github.com/dvyukov/go-fuzz v0.0.0-20191206100749-a378175e205c h1:/bXaeEuNG6V0HeyEGw11DYLW5BGsOPlcVRIXbHNUWSo=
+github.com/dvyukov/go-fuzz v0.0.0-20191206100749-a378175e205c/go.mod h1:11Gm+ccJnvAhCNLlf5+cS9KjtbaD5I5zaZpFMsTHWTw=
