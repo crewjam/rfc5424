@@ -1,8 +1,8 @@
-module github.com/rfc5424
+module github.com/crewjam/rfc5424
 
 go 1.13
 
 require (
-	github.com/crewjam/rfc5424 v0.0.0-20180723152949-c25bdd3a0ba2
-	github.com/dvyukov/go-fuzz v0.0.0-20191206100749-a378175e205c // indirect
+	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
+	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f
 )
